@@ -1,6 +1,5 @@
-# Datasutram · Bank Statement Analyser
+#  · Bank Statement Analyser
 
-**Candidate:** Tanish Shah · **Interviewer:** Aishik Pyne · May 2026
 
 A premium, privacy-first Indian bank statement analyser. Upload any PDF or CSV — it works with any column naming convention.
 
