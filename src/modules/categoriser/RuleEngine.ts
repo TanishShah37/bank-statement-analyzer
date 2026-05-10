@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Categoriser — rule engine + LLM fallback
+// Categoriser — rule engine
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface Transaction {
@@ -44,10 +44,3 @@ export function categorise(t: Transaction): { cat: string; cls: string } {
 
 const VALID_CATS = ["Income", "Cash (ATM)", "Transfer", "Shopping", "Loan / Finance", "Bank Charges", "Health", "Food & Dining", "Telecom / Apps", "Utilities", "Cheque", "Other"];
 const CAT_CLS: Record<string, string> = { "Income": "income", "Cash (ATM)": "cash", "Transfer": "transfer", "Shopping": "shopping", "Loan / Finance": "finance", "Bank Charges": "charges", "Health": "health", "Food & Dining": "food", "Telecom / Apps": "telecom", "Utilities": "utilities", "Cheque": "cheque", "Other": "other" };
-
-// LLM categorization is disabled - categorization is now purely rule-based
-// LLM is only used for AI chat functionality
-export async function llmFallback(txns: Transaction[], signal?: AbortSignal): Promise<Transaction[]> {
-  // Return transactions unchanged - categorization is handled by rule-based categoriser
-  return txns;
-}

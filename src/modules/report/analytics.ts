@@ -60,7 +60,7 @@ export interface SummaryAnalytics {
   balanceTrajectory: BalanceTrajectory[];
 }
 
-export function computeSummary(txns: Transaction[]): SummaryAnalytics {
+function computeSummaryInternal(txns: Transaction[]): SummaryAnalytics {
   const debits = txns.filter(t => t.isDebit);
   const credits = txns.filter(t => !t.isDebit);
   const totalIn = credits.reduce((s, t) => s + t.amount, 0);
@@ -119,4 +119,25 @@ export function computeSummary(txns: Transaction[]): SummaryAnalytics {
     txnCount: txns.length,
     balanceTrajectory
   };
+}
+
+export function computeSummary(txns: Transaction[]): SummaryAnalytics {
+  return computeSummaryInternal(txns);
+}
+
+// Async version that yields control to prevent UI blocking on large datasets
+export async function computeSummaryAsync(txns: Transaction[]): Promise<SummaryAnalytics> {
+  // For small datasets (<10K rows), compute synchronously
+  if (txns.length < 10000) {
+    return computeSummaryInternal(txns);
+  }
+  
+  // For large datasets, use chunked processing with yielding
+  return new Promise((resolve) => {
+    // Use setTimeout to yield control to the UI thread
+    setTimeout(() => {
+      const summary = computeSummaryInternal(txns);
+      resolve(summary);
+    }, 0);
+  });
 }

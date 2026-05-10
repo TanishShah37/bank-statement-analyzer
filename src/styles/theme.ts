@@ -1275,6 +1275,14 @@ export const styles = `
     transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
   }
   .chat-panel.open { transform: translateX(0); }
+  
+  /* Mobile responsive chat panel */
+  @media (max-width: 400px) {
+    .chat-panel {
+      width: 100%;
+      top: 0;
+    }
+  }
   .chat-header {
     padding: 16px 20px;
     border-bottom: 1px solid ${T.border};

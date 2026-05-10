@@ -7,10 +7,11 @@ A premium, privacy-first Indian bank statement analyser. Upload any PDF or CSV �
 ## Features
 
 - **Universal Parser** — 3-tier detection: alias map → heuristic sniff → LLM column mapper
-- **Auto-Categorisation** — Rule engine (12 categories) + LLM fallback
+- **Auto-Categorisation** — Rule engine (12 categories) with deterministic keyword/regex rules
 - **Charts** — Monthly cash flow bar, spend-by-category donut, balance trajectory line, top merchants with sparklines, daily spending heatmap, stacked area chart
 - **AI Chat** — Grounded Q&A via OpenRouter / gemini-flash-1.5
-- **Export** — Download normalised CSV, PDF, and Excel
+- **Export** — Download normalised CSV (with formula injection protection), PDF, and Excel
+- **Responsive Design** — Mobile-optimized layout with responsive chat panel
 
 ## Getting Started
 
@@ -45,7 +46,6 @@ src/
       normalise.ts         # Date/amount/DrCr normalisers
     categoriser/
       RuleEngine.ts        # Deterministic keyword/regex rules
-      LLMCategoriser.ts    # OpenRouter fallback
     report/
       ReportView.tsx       # KPIs + charts + transaction table
       analytics.ts         # computeSummary
@@ -62,8 +62,6 @@ src/
     chat/
       ChatView.tsx         # Chat panel UI
       Glossary.tsx         # Bank statement terms
-    state/
-      store.ts             # Central in-memory state
   styles/
     theme.css              # Design tokens + global CSS
     base.css               # Reset + base element styles
@@ -74,6 +72,13 @@ src/
 
 - XSS: all user strings pass through `esc()` before `innerHTML`
 - Prompt injection: system prompt built from structured summary, not raw CSV
+- CSV formula injection: values starting with `=`, `+`, `-`, or `@` are sanitized with tab prefix to prevent Excel injection
 - API key in `sessionStorage` only (cleared on tab close)
 - 5 MB file cap enforced before reading
 - Chat history capped at 40 messages
+
+## Performance
+
+- Async computation for large datasets (10K+ rows) using setTimeout to yield UI thread control
+- Optimized CSV export with sanitization to prevent formula injection
+- Responsive chat panel adapts to mobile screens (≤400px width)

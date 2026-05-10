@@ -5,8 +5,7 @@
 import { useState, useEffect } from "react";
 import { styles, T } from "./styles/theme";
 import { parseUniversal, parseUniversalCSV, type ColumnMap } from "./modules/parser/StatementParser";
-import { llmFallback } from "./modules/categoriser/RuleEngine";
-import { computeSummary, type Transaction, type SummaryAnalytics } from "./modules/report/analytics";
+import { computeSummaryAsync, computeSummary, type Transaction, type SummaryAnalytics } from "./modules/report/analytics";
 import { exportNormalisedCSV, exportNormalisedJSON, clearAllData } from "./modules/report/format";
 import { validateFile } from "./modules/upload/validator";
 import { DEMO_CSV } from "./modules/upload/kaggleDataset";
@@ -209,7 +208,8 @@ export default function App() {
       if (controller.signal.aborted) throw new Error("Operation cancelled by user");
 
       setTxns(rawTxns);
-      setSummary(computeSummary(rawTxns));
+      const summary = await computeSummaryAsync(rawTxns);
+      setSummary(summary);
       setPhase("report");
       setErrorState({ message: "", retryable: false, retryCount: 0 });
       setAbortController(null);
@@ -268,7 +268,8 @@ export default function App() {
       setProgress({ pct: 85, label: "Building report…" });
 
       setTxns(rawTxns);
-      setSummary(computeSummary(rawTxns));
+      const summary = await computeSummaryAsync(rawTxns);
+      setSummary(summary);
       setPhase("report");
       setErrorState({ message: "", retryable: false, retryCount: 0 });
       setAbortController(null);

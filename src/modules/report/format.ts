@@ -18,9 +18,20 @@ export function fmt(value: number): string {
 
 export function exportNormalisedCSV(txns: any[]): void {
   const headers = ["date", "drcr", "amount", "balance", "mode", "name", "cat", "cls"];
+  
+  // Sanitize values to prevent CSV formula injection
+  const sanitizeValue = (val: any): string => {
+    const strVal = String(val ?? "");
+    // If value starts with =, +, -, or @, prepend a tab to prevent Excel formula injection
+    if (/^[=+\-@]/.test(strVal)) {
+      return "\t" + strVal;
+    }
+    return strVal;
+  };
+
   const csvContent = [
     headers.join(","),
-    ...txns.map(t => headers.map(h => JSON.stringify(t[h] ?? "")).join(","))
+    ...txns.map(t => headers.map(h => JSON.stringify(sanitizeValue(t[h]))).join(","))
   ].join("\n");
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -268,7 +279,7 @@ export function exportNormalisedXLS(txns: any[]): void {
   ];
   
   // Style the header row
-  const headerRange = XLSX.utils.decode_range(ws["!ref"]);
+  const headerRange = XLSX.utils.decode_range(ws["!ref"] || "A1");
   for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
     const address = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
     if (!ws[address]) continue;

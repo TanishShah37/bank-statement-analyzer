@@ -141,8 +141,6 @@ export function Dashboard({ txns, summary, fileName, parseMap, parseWarnings, on
         <div className="charts-row three">
           <CashFlowChart 
             monthly={sm.monthly} 
-            sortBy={chartStates.cashFlowSortBy}
-            sortOrder={chartStates.cashFlowSortOrder}
             onStateChange={(state) => setChartStates(s => ({ ...s, cashFlowSortBy: state.sortBy, cashFlowSortOrder: state.sortOrder }))} 
           />
           <CategoryDonut 

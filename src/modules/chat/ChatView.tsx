@@ -135,10 +135,10 @@ Your role is to help users understand their transaction data and perform specifi
 5. **Data Context**: 
    - Total transactions: ${totalTxns}
    - Date range: ${dateRange}
-   - Total credits: ${summary.totalCredits}
-   - Total debits: ${summary.totalDebits}
-   - Net savings: ${summary.netSavings}
-   - Top spending category: ${summary.topCategory?.name || "N/A"} (${summary.topCategory?.amount || 0})
+   - Total credits: ${summary.totalIn}
+   - Total debits: ${summary.totalOut}
+   - Net savings: ${summary.savings}
+   - Top spending category: ${Object.entries(summary.catTotals).sort((a, b) => b[1].total - a[1].total)[0]?.[0] || "N/A"}
 
 6. **Response Guidelines**:
    - Be concise and helpful
@@ -151,7 +151,7 @@ Your role is to help users understand their transaction data and perform specifi
 - Assistant: I'll sort the transactions by amount in descending order to show the largest expenses first. ACTION:sort_transactions{"column": "amount", "order": "desc"}
 
 - User: "How much did I spend on food?"
-- Assistant: Based on the data, you spent ${summary.categoryBreakdown?.Food?.amount || 0} on food transactions. Would you like me to filter to show only food transactions? ACTION:filter_transactions{"category": "Food"}
+- Assistant: Based on the data, you spent ${Object.entries(summary.catTotals).find(([cat]) => cat.toLowerCase().includes("food"))?.[1].total || 0} on food transactions. Would you like me to filter to show only food transactions? ACTION:filter_transactions{"category": "Food"}
 
 - User: "Give me investment advice"
 - Assistant: I'm not able to provide investment advice. I can help you analyze your transaction data and identify spending patterns. Would you like me to show your spending by category instead?
